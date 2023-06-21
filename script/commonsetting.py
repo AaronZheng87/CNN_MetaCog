@@ -13,7 +13,7 @@ noise_level_train = 3
 noise_level_val = 1
 noise_level_test = 0.5
 
-batch_size = 2
+batch_size = 32
 image_resize = 128
 num_workers = 4
 learning_rate = 1e-4

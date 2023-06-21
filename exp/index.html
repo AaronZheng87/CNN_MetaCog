@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.0"></script>
+    <script src="http://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.0"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
+    <link href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="stimuli_prac.js"></script>
+    <script src="stimuli_test.js"></script>
+  </head>
+  <body bgcolor="grey"></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+    on_finish: function() {
+    jsPsych.data.get().localSave('csv', 'exptest' + '.csv'), 
+    jsPsych.data.displayData('csv');}
+    
+    });
+
+
+    var timeline = [];
+    var preload = {
+    type: jsPsychPreload,
+    auto_preload: true
+}
+
+    var choice_response = ["好人", "无信息", "坏人"]
+
+    var welcome = {
+        type: jsPsychHtmlKeyboardResponse,
+         stimulus: "<p style =' color : white'>hhhhhhhhhh</p>"
+};
+
+    var fixation = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: '<div style="font-size:60px; color: white">+</div>',
+    choices: "NO_KEYS",
+    trial_duration: 500,
+    };
+
+    var choice_trial= {
+        type: jsPsychImageButtonResponse, 
+        stimulus: jsPsych.timelineVariable("stim"),
+        //stimulus_height:
+        //stimulus_width:
+        choices: function(data){
+          shuffle_choice = jsPsych.randomization.sampleWithoutReplacement(choice_response, 3)
+          return shuffle_choice
+        },//怎么随机？
+        prompt:"<p style =' color : white'>该图片对应的道德标签是？</p>",
+        stimulus_duration:200,
+        data: {
+          correct_response: 'No-response',
+          acc:0,//which is impossible but we set it as initial data
+          decision: 'Noinclude'
+        },
+        on_start: function(choice_trial){
+          choice_trial.data.correct_response = jsPsych.timelineVariable("correct_choice");
+         },
+        on_finish:function(data){
+          data.decision = shuffle_choice[data.response]
+
+          switch(data.decision){
+            case "好人":
+              if (data.correct_response == "Good") data.acc = 1;
+              break;
+            case "坏人":
+              if (data.correct_response == "Bad") data.acc = 1;
+              break
+            case "无信息":
+              if (data.correct_response == "No_info") data.acc = 1;
+              break
+            default:
+              data.acc = 0;
+              break;
+          }
+        }
+        };
+
+    var self_report = {
+    type: jsPsychSurveyLikert,
+    questions: [
+        {
+        prompt:"<p style =' color : white'>你对刚才选择正确的信心程度</p>", 
+        labels: function(data){
+          shuffle_label = jsPsych.randomization.sampleWithoutReplacement(["<p style =' color : white'>有较弱的信心</p>", "<p style =' color : white'>有较强的信心</p>"], 2)
+          return shuffle_label
+        }
+        }
+    ],
+    button_label:"继续",
+    data: {
+      decision_2: 'Noinclude'
+    },
+    on_finish: function(data){
+      {
+      data.decision_2 = shuffle_label[data.response.Q0]
+    }
+  }
+    };
+
+
+
+
+
+    var prac_feedback = {
+      type:jsPsychHtmlKeyboardResponse,
+      stimulus: function(){
+        var data = jsPsych.data.get().last(2).values()[0];
+        word = data.acc == 1 ? "正确" :"错误";
+        if (word == "正确"){
+          return "<span style='color:GreenYellow; font-size: 70px;'>正确! </span>"
+        }
+        else{
+          return "<span style='color:red; font-size: 70px;'>错误! </span>"
+        }
+ 
+      },
+      trial_duration:500,
+      choices:"No_KEYS"
+    }
+    
+    var tofomal = {
+        type: jsPsychHtmlKeyboardResponse,
+         stimulus: "<p style =' color : white'>aaaaaaa</p>"
+};
+
+  function sum(arr) {//for caulculate mean acc
+          var s = 0;
+          for (var i = arr.length-1;i>0;i--) {
+              s += arr[i];
+          }
+          return s;
+      }
+
+    var practice = {
+    timeline: [
+        fixation,
+        choice_trial,
+        self_report,
+        prac_feedback
+    ],
+    timeline_variables: prac_stim,
+    randomize_order: true,
+    loop_function:function(){//number of trials of choices and reports and sum them then divide by the mean of the sum
+        let mean = sum(jsPsych.data.get().last(60).filter({save:true}).select('acc'))/(60/2)
+        return mean<0.34
+        console.log(mean)
+    },
+    data: {
+          exp_type: 'practice',
+        },
+};
+
+test_stim_shuffle = jsPsych.randomization.repeat(test_stim, 1);
+
+  const blocks = [[], [], [], [],[],[]]
+  var trial_in_block = [[0, 60], [60, 120], [120, 180], [180, 240],[240,300],[300,360]]
+  var ll = 0
+  trial_in_block.forEach((v,i) => {
+    for (let j = v[0]; j < v[1]; j++) {
+      blocks[i].push(test_stim_shuffle[ll]);
+      ll+=1
+    }
+  })
+  console.log(blocks)
+  var block1 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[1], 
+    randomize_order:true
+  }
+  var block2 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[2], 
+    randomize_order:true
+  }
+  var block3 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[3], 
+    randomize_order:true
+  }
+  var block4 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[4], 
+    randomize_order:true
+  }
+  var block5 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[5], 
+    randomize_order:true
+  }
+  var block6 = {
+    timeline:[
+      fixation,
+      choice_trial, 
+      self_report
+    ], timeline_variables: blocks[6], 
+    randomize_order:true
+  }
+  var procedure = {
+    timeline: [preload, welcome, practice, tofomal, block1, block2, block3, block4, block5, block6],//
+    on_timeline_start: function() {
+        console.log('The trial procedure just started.')
+    },
+    on_timeline_finish: function() {
+        console.log('The trial procedure just finished.')
+    }
+}
+
+    timeline.push(procedure);
+    jsPsych.run(timeline);
+
+  </script>
+</html>
