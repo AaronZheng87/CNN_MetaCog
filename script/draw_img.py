@@ -90,5 +90,5 @@ def add_to_all2(pixel, num, tofold):
 
 
 add_to_all2(0.5, 5, "test")
-add_to_all2(3, 10, "train")
 add_to_all2(1, 5, "validation")
+add_to_all2(3, 10, "train")

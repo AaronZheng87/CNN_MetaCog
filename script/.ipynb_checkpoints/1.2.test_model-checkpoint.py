@@ -48,7 +48,7 @@ if __name__ == "__main__":
     dataset_test = CustomImageDataset(commonsetting.test_dir,label_map=commonsetting.label_map , transform=tranformer_steps)
     dataloader_test = DataLoader(dataset_test, batch_size=commonsetting.batch_size, shuffle=True, num_workers=commonsetting.num_workers)
     SimpleCNN = perceptual_network(**SimpleCNN_args)
-    SimpleCNN.load_state_dict(torch.load("/Users/zhengyuanrui/Desktop/CNN_MetaCog/models/simplecnn.h5"))
+    SimpleCNN.load_state_dict(torch.load("../models/simplecnn.h5"))
     for p in SimpleCNN.parameters(): p.requires_grad = False
     # define loss function
     classification_loss = nn.BCELoss()
@@ -67,20 +67,23 @@ if __name__ == "__main__":
         y_pred = []
         y_correct_pred = []
         confidence_out = []
-        for idx_batch, (batch_image, batch_label) in enumerate(dataloader_test):
-            batch_label = torch.vstack([1-batch_label, batch_label]).T.to(commonsetting.device)
+        for idx_batch, (batch_image, batch_label) in tqdm(enumerate(dataloader_test)):
+            batch_label = torch.vstack(batch_label).T.float()
             #记得每一次处理数据之前要做这一步
             
-            features,hidden_representation,prediction, confidence = SimpleCNN(batch_image.to(commonsetting.device))
-            
-            temp = torch.tensor([calculate_confidence_label(item) for item in prediction[:,1].clone().detach()])
+            features,hidden_representation,prediction, confidence =  SimpleCNN(batch_image.to(commonsetting.device))
+            correct_preds = batch_label.clone().detach().argmax(1)==prediction.clone().detach().argmax(1)
+            correct_preds = correct_preds.float()
 
-            correct_preds = torch.as_tensor(temp.clone().detach() == batch_label[:,1].clone().detach(),dtype=float)
             correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
+            
             
             y_correct_pred.append(correct_preds.detach().cpu().numpy())
             y_true.append(batch_label.detach().cpu().numpy())
             y_pred.append(prediction.detach().cpu().numpy())
             confidence_out.append(confidence.detach().cpu().numpy())
-
     
+    y_pred = np.concatenate(y_pred, axis=0)
+    y_true = np.concatenate(y_true, axis=0)
+    y_correct_pred = np.concatenate(y_correct_pred, axis=0)
+    confidence_out = np.concatenate(confidence_out, axis=0)

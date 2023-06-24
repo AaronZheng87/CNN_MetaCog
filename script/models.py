@@ -346,6 +346,7 @@ class perceptual_network(nn.Module):
                  hidden_dropout:float           = 0.,
                  hidden_layer_type:str          = 'linear',
                  output_layer_size:int          = 2,
+                 confidence_layer_size:int      = 2,
                  in_shape:Tuple                 = (1,3,128,128),
                  retrain_encoder:bool           = False,
                  device                         = 'cpu',
@@ -385,7 +386,7 @@ class perceptual_network(nn.Module):
                                             nn.Softmax(dim = -1)
                                             ).to(device)
         self.confidence_layer            = nn.Sequential(
-                                            nn.Linear(hidden_layer_size,output_layer_size),
+                                            nn.Linear(hidden_layer_size,confidence_layer_size),
                                             nn.Softmax(dim = -1)
                                             ).to(device)
     

@@ -1094,17 +1094,6 @@ def build_dataloader(img_dir:str,
                                      )
     return dataloader
 
-# calculate confidence label for 0,0.5,1 class
-def calculate_confidence_label(y_pred):
-    if y_pred <= 1/3:
-        y_pred = 0
-    elif y_pred >= 2/3:
-        y_pred = 1
-    else:
-        y_pred = 0.5
-
-    return y_pred
-
 ##############################################################################
 
 if __name__ == "__main__":
