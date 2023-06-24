@@ -58,7 +58,7 @@ def draw_rectangle3(img_width, img_height, num):
     y0 = []
     y1 = []
 
-
+## in the function x0 must larger than x1
     for i in range(num): 
         x0_tmp = random.randint(0,300)
         x1_tmp = random.randint(0,300)

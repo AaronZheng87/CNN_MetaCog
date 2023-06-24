@@ -10,18 +10,18 @@
     <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.0"></script>
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
     <link href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" rel="stylesheet" type="text/css" />
-    <script src="stimuli_prac.js"></script>
-
+    <script src="stim_test.js"></script>
   </head>
   <body bgcolor="grey"></body>
   <script>
 
     var jsPsych = initJsPsych({
     on_finish: function() {
-    jsPsych.data.get().localSave('csv', 'exptest' + '.csv'), 
+    jsPsych.data.get().localSave('csv', 'test' + '.csv'), 
     jsPsych.data.displayData('csv');}
     
     });
+
 
     var timeline = [];
 
@@ -30,31 +30,10 @@
     var report_response = ["正确", "错误"]
     var report_key = ['a', 'd']
 
-    var preload = {
-    type: jsPsychPreload,
-    auto_preload: true
-}
-    var welcome = {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: "<p style =' color : white'>hhhhhhhhhh</p>"
-    };
 
-    var instruction = {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: "<p style =' color : white'>abcd</p>"
-    };
-
-
-var fixation = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: '<div style="font-size:60px; color: white">+</div>',
-    choices: "NO_KEYS",
-    trial_duration: 500,
-    };
-
-  var trial = {
+    var trial = {
     type: jsPsychImageKeyboardResponse,
-    stimulus: jsPsych.timelineVariable("stim"),
+    stimulus:"/Users/zhengyuanrui/Downloads/C.bmp" ,//jsPsych.timelineVariable("stim"),
     choices: "NO_KEYS",
     prompt: "<p> </p>",
     trial_duration: 200,
@@ -73,7 +52,6 @@ var trial2 = {
     stimulus: '<p> </p>',
     choices: "NO_KEYS",
     prompt:'a',
-    trial_duration:2000,
     data: {
           correct_response: 'No-response',
           acc:0,//which is impossible but we set it as initial data
@@ -84,8 +62,8 @@ var trial2 = {
         shuffle_choice = jsPsych.randomization.sampleWithoutReplacement(choice_response, 3)
         shuffle_keys = jsPsych.randomization.sampleWithoutReplacement(keys, 3)
         key_choice_match = {choice:shuffle_choice, key: shuffle_keys}
-        prompt_shuffle = jsPsych.randomization.sampleWithoutReplacement([`<p style =' color : white'>${key_choice_match["choice"][0]}: ${key_choice_match["key"][0].toUpperCase()} </p> `, `<p style =' color : white'>${key_choice_match["choice"][1]}: ${key_choice_match["key"][1].toUpperCase()}</p> `, `<p style =' color : white'>${key_choice_match["choice"][2]}: ${key_choice_match["key"][2].toUpperCase()}</p> `], 3) 
-        trial2.prompt = `<p style =' color : yellow'> >>>>>请按键反应<<<<< </p>` + prompt_shuffle[0] + prompt_shuffle[1] + prompt_shuffle[2]
+        prompt_shuffle = jsPsych.randomization.sampleWithoutReplacement([`<p style =' color : white'>图片对应的是${key_choice_match["choice"][0]}，请按 ${key_choice_match["key"][0]} 键</p> `, `<p style =' color : white'>图片对应的是${key_choice_match["choice"][1]}，请按 ${key_choice_match["key"][1]} 键</p> `, `<p style =' color : white'>图片对应的是${key_choice_match["choice"][2]}，请按 ${key_choice_match["key"][2]} 键</p> `], 3) 
+        trial2.prompt = prompt_shuffle[0] + prompt_shuffle[1] + prompt_shuffle[2]
         trial2.choices = key_choice_match['key']
         trial2.data.correct_response = jsPsych.data.get().last(1).select("correct_response")['values'][0];
     },
@@ -112,12 +90,12 @@ var trial2 = {
 };
 
 
-    var self_report = {
+
+var self_report = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: "<p style =' color : white'>你认为刚才你的判断是?</p>",
     choices: ['a', 'd'],
     prompt:'a',
-    trial_duration: 2000, 
     data: {
       decision_2: 'Noinclude', 
       record_acc: "no"
@@ -139,31 +117,12 @@ var trial2 = {
     }
 
 
-    var prac_feedback = {
-      type:jsPsychHtmlKeyboardResponse,
-      stimulus: function(){
-        
-        var acc = jsPsych.data.get().last(3).filter({trial_type: 'html-keyboard-response'}).filter({record_acc: 'yes'}).select('acc')['values'][0];
-        console.log(acc);
-
-        word = acc == 1 ? "正确" :"错误";
-        if (word == "正确"){
-          return "<span style='color:GreenYellow; font-size: 70px;'>正确! </span>"
-        }
-        else{
-          return "<span style='color:red; font-size: 70px;'>错误! </span>"
-        }
- 
-      },
-      trial_duration:500,
-      choices:"No_KEYS"
-    };
 
 
-    var feedback_prac = {
+  var feedback_prac = {
       type: jsPsychHtmlKeyboardResponse,
       stimulus: function () {
-        var kbr = jsPsych.data.get().last(150).filter({trial_type: 'html-keyboard-response'});
+        var kbr = jsPsych.data.get().last(12).filter({trial_type: 'html-keyboard-response'});
         var recorded = jsPsych.data.get().filterCustom(function(kbr){
     return kbr.record_acc == "yes";
 });
@@ -175,58 +134,12 @@ var trial2 = {
                               <div><p class='context'>您正确回答了" + accuracy + "% 的试次。</p>" 
          
       }
-    };
+    }
 
-
-
-    var practice_error_instruction = {
-        timeline:[feedback_prac,instruction],
-        conditional_function:function(){
-            if (parseInt(sessionStorage.getItem("errorPrac")) || sessionStorage.getItem("errorPrac") == "null") {
-                sessionStorage.setItem("errorPrac", 0);
-                return true;
-            } else {
-                return false;
-            }
-
-            }
-        };
-
-    
-    var practice = {
-       timeline: [
-        //practice_error_instruction,
-        fixation,
-        trial,
-        trial2,
-        self_report,
-        prac_feedback
-    ],
-    timeline_variables: prac_stim,
-    randomize_order: true
-    /*loop_function:function(){//number of trials of choices and reports and sum them then divide by the mean of the sum
-        let mean = jsPsych.data.get().last(120).filter({trial_type: 'image-button-response'}).select('acc').mean()
-        if (mean >= 0.5){
-            sessionStorage.setItem("errorPrac", "null");
-            return false;
-        } else {
-            sessionStorage.setItem("errorPrac", 1);
-            return true;
-        }
-    },
-    data: {
-          exp_type: 'practice',
-        },*/
-};
-
-var welcome2 = {
-        type: jsPsychHtmlKeyboardResponse,
-         stimulus: "<p style =' color : white'>NONONONONO</p>"
-};
-    timeline.push(instruction);
-    timeline.push(practice);
-    timeline.push(feedback_prac)
-    timeline.push(welcome2);
+    timeline.push(trial)
+    timeline.push(trial2)
+    timeline.push(self_report)
+    //timeline.push(feedback_prac)
     jsPsych.run(timeline);
     
 

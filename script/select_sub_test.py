@@ -22,7 +22,7 @@ for fold in os.listdir(test_dir):
                 imgs.append(img_single)
             else:
                 pass
-        idx = random.sample(range(len(imgs)), 130) #each fold 120picture
+        idx = random.sample(range(len(imgs)), 130) #each fold 130 picture
 
         for id in idx[:120]:
             select['stim'].append(imgs[id])
@@ -45,7 +45,7 @@ for fold in os.listdir(test_dir):
                 imgs.append(img_single)
             else:
                 pass
-        idx = random.sample(range(len(imgs)), 130) #each fold 120picture and 10 for practice
+        idx = random.sample(range(len(imgs)), 130) #each fold 120 picture and 10 for practice
         for id in idx[:120]:
             select['stim'].append(imgs[id])
             select['correct_choice'].append("Good")
@@ -81,9 +81,8 @@ for fold in os.listdir(test_dir):
 
     else:
         pass
-'''
+
 df_stim_formal = pd.DataFrame(select)
 df_stim_prac = pd.DataFrame(select_prac)
 df_stim_formal.to_csv("../stim_formal.csv")
 df_stim_prac.to_csv("../stim_prac.csv")
-'''

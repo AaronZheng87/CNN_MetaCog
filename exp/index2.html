@@ -11,29 +11,31 @@
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
     <link href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" rel="stylesheet" type="text/css" />
     <script src="stimuli_prac.js"></script>
-
+    <script src="stimuli_test.js"></script>
+    <script src="confidence.js"></script>
   </head>
   <body bgcolor="grey"></body>
   <script>
 
-    var jsPsych = initJsPsych({
+var jsPsych = initJsPsych({
     on_finish: function() {
     jsPsych.data.get().localSave('csv', 'exptest' + '.csv'), 
     jsPsych.data.displayData('csv');}
     
     });
 
+
     var timeline = [];
 
-    var choice_response = ["好人", "无信息", "坏人"]
-    var keys = ['j', 'k', 'l']
-    var report_response = ["正确", "错误"]
-    var report_key = ['a', 'd']
+    var choice_response = ["好人", "常人", "坏人"];
+    var keys = ['j', 'k', 'l'];
+    var report_response = ["正确", "错误"];
+    var report_key = ['a', 'd'];
 
     var preload = {
     type: jsPsychPreload,
     auto_preload: true
-}
+};
     var welcome = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: "<p style =' color : white'>hhhhhhhhhh</p>"
@@ -45,14 +47,14 @@
     };
 
 
-var fixation = {
+  var fixation = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: '<div style="font-size:60px; color: white">+</div>',
     choices: "NO_KEYS",
     trial_duration: 500,
     };
 
-  var trial = {
+    var trial = {
     type: jsPsychImageKeyboardResponse,
     stimulus: jsPsych.timelineVariable("stim"),
     choices: "NO_KEYS",
@@ -101,7 +103,7 @@ var trial2 = {
             case "坏人":
               if (data.correct_response == "Bad") data.acc = 1;
               break
-            case "无信息":
+            case "常人":
               if (data.correct_response == "No_info") data.acc = 1;
               break
             default:
@@ -136,8 +138,7 @@ var trial2 = {
         data.decision_2 = key_response['choice'][idx]
     },
     
-    }
-
+    };
 
     var prac_feedback = {
       type:jsPsychHtmlKeyboardResponse,
@@ -156,7 +157,10 @@ var trial2 = {
  
       },
       trial_duration:500,
-      choices:"No_KEYS"
+      choices:"No_KEYS",
+    data: {
+          feedback: 'yes',
+        },
     };
 
 
@@ -174,12 +178,14 @@ var trial2 = {
         return "<style>.context{color:white; font-size: 35px; line-height:40px}</style>\
                               <div><p class='context'>您正确回答了" + accuracy + "% 的试次。</p>" 
          
-      }
+      },
+    data: {
+          feedback: 'yes',
+        },
     };
 
 
-
-    var practice_error_instruction = {
+  var practice_error_instruction = {
         timeline:[feedback_prac,instruction],
         conditional_function:function(){
             if (parseInt(sessionStorage.getItem("errorPrac")) || sessionStorage.getItem("errorPrac") == "null") {
@@ -193,9 +199,9 @@ var trial2 = {
         };
 
     
-    var practice = {
+  var practice = {
        timeline: [
-        //practice_error_instruction,
+        practice_error_instruction,
         fixation,
         trial,
         trial2,
@@ -203,9 +209,9 @@ var trial2 = {
         prac_feedback
     ],
     timeline_variables: prac_stim,
-    randomize_order: true
-    /*loop_function:function(){//number of trials of choices and reports and sum them then divide by the mean of the sum
-        let mean = jsPsych.data.get().last(120).filter({trial_type: 'image-button-response'}).select('acc').mean()
+    randomize_order: true,
+    loop_function:function(){//number of trials of choices and reports and sum them then divide by the mean of the sum
+        let mean = jsPsych.data.get().last(150).filter({trial_type: 'html-keyboard-response'}).select('acc').mean()
         if (mean >= 0.5){
             sessionStorage.setItem("errorPrac", "null");
             return false;
@@ -216,19 +222,152 @@ var trial2 = {
     },
     data: {
           exp_type: 'practice',
-        },*/
+        },
 };
 
-var welcome2 = {
-        type: jsPsychHtmlKeyboardResponse,
-         stimulus: "<p style =' color : white'>NONONONONO</p>"
-};
-    timeline.push(instruction);
-    timeline.push(practice);
-    timeline.push(feedback_prac)
-    timeline.push(welcome2);
+test_stim_shuffle = jsPsych.randomization.repeat(test_stim, 1);
+
+  const blocks = [[], [], [], [],[],[]]
+  var trial_in_block = [[0, 60], [60, 120], [120, 180], [180, 240],[240,300],[300,360]]
+  var ll = 0
+  trial_in_block.forEach((v,i) => {
+    for (let j = v[0]; j < v[1]; j++) {
+      blocks[i].push(test_stim_shuffle[ll]);
+      ll+=1
+    }
+  })
+  console.log(blocks)
+
+
+  var tofomal = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "<p style =' color : white'>the following is fomal experiment!</p>"
+    };
+
+
+  var feedback_block = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: function () {
+        var kbr = jsPsych.data.get().last(300).filter({trial_type: 'html-keyboard-response'});
+        var recorded = jsPsych.data.get().filterCustom(function(kbr){
+    return kbr.record_acc == "yes";
+});
+      var mean = recorded.select('acc').mean()
+
+        let accuracy = Math.round(mean * 100);
+        return "<style>.context{color:white; font-size: 35px; line-height:40px}</style>\
+                              <div><p class='context'>您正确回答了" + accuracy + "% 的试次。</p>" 
+         
+      },
+    data: {
+          feedback: 'yes',
+        },
+    }
+
+
+  var block1 = {
+    timeline:[
+      fixation,
+      trial, 
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[0], 
+    randomize_order:true, 
+    data: {
+      block_id:"block1"
+
+        }
+  }
+  var block2 = {
+    timeline:[
+      fixation,
+      trial, 
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[1], 
+    randomize_order:true, 
+    data: {
+      block_id:"block2"
+
+        }
+  }
+  var block3 = {
+    timeline:[
+      fixation,
+      trial,
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[2], 
+    randomize_order:true, 
+    data: {
+      block_id:"block3"
+
+        }
+  }
+  var block4 = {
+    timeline:[
+      fixation,
+      trial, 
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[3], 
+    randomize_order:true, 
+    data: {
+      block_id:"block4"
+
+        }
+  }
+  var block5 = {
+    timeline:[
+      fixation,
+      trial, 
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[4], 
+    randomize_order:true, 
+    data: {
+      block_id:"block5"
+
+        }
+  }
+  var block6 = {
+    timeline:[
+      fixation,
+      trial, 
+      trial2, 
+      self_report
+    ], timeline_variables: blocks[5], 
+    randomize_order:true,
+    data: {
+      block_id:"block6"
+
+        }
+  }
+
+  var formal_exp = {
+    timeline: [block1, feedback_block, block2, feedback_block, 
+    block3, feedback_block, block4, feedback_block, block5, feedback_block, block6, feedback_block],//
+    data: {
+          exp_type: 'formal',
+        },
+}
+
+  var finish = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "<p style =' color : white'>bye</p>"
+    };
+  var procedure = {
+    timeline: [preload, welcome, practice,feedback_prac, tofomal, formal_exp, finish],//
+    on_timeline_start: function() {
+        console.log('The trial procedure just started.')
+    },
+    on_timeline_finish: function() {
+        console.log('The trial procedure just finished.')
+    }
+}
+
+    timeline.push(procedure);
     jsPsych.run(timeline);
-    
 
   </script>
 </html>

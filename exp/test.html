@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
     <link href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" rel="stylesheet" type="text/css" />
     <script src="stim_test.js"></script>
+    <script src="confidence.js"></script>
   </head>
   <body bgcolor="grey"></body>
   <script>
@@ -28,16 +29,6 @@
     type: jsPsychPreload,
     auto_preload: true
 }
-    var welcome = {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: "<p style =' color : white'>hhhhhhhhhh</p>"
-    };
-
-    var instruction = {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: "<p style =' color : white'>abcd</p>"
-    };
-
 
 var fixation = {
     type: jsPsychHtmlKeyboardResponse,
@@ -84,37 +75,6 @@ var choice_trial= {
           }
         }
         };
-    var self_report = {
-    type: jsPsychSurveyLikert,
-    questions: [
-        {
-        prompt:"<p style =' color : white'>你对刚才选择正确的信心程度</p>", 
-        labels: function(data){
-          shuffle_label = jsPsych.randomization.sampleWithoutReplacement(["<p style =' color : white'>有较弱的信心</p>", "<p style =' color : white'>有较强的信心</p>"], 2)
-          return shuffle_label
-        }
-        }
-    ],
-    button_label:"继续",
-
-
-    data: {
-      decision_2: 'Noinclude'
-    },
-    on_finish: function(data){
-      {
-      data.decision_2 = shuffle_label[data.response.Q0]
-    }
-  }
-    };
-
-    function sum(arr) {//for caulculate mean acc
-        var s = 0;
-        for (var i = arr.length-1;i>0;i--) {
-            s += arr[i];
-        }
-        return s;
-    }
 
     var prac_feedback = {
       type:jsPsychHtmlKeyboardResponse,
@@ -134,31 +94,8 @@ var choice_trial= {
       choices:"No_KEYS"
     }
 
-    var feedback_prac = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: function () {
-        let mean = jsPsych.data.get().last(12).filter({trial_type: 'image-button-response'}).select('acc').mean(); // 运行逻辑：先挑出data里的所有的correct：true/false的数据行，成为新的数组，然后对倒数的某几组进行计算
-        //这里填入timeline_variables里面的trial数量
-        let accuracy = Math.round(mean * 100);
-        return "<style>.context{color:white; font-size: 35px; line-height:40px}</style>\
-                              <div><p class='context'>您正确回答了" + accuracy + "% 的试次。</p>" 
-         
-      }
-    }
 
-    var practice_error_instruction = {
-        timeline:[feedback_prac,instruction],
-        conditional_function:function(){
-            if (parseInt(sessionStorage.getItem("errorPrac")) || sessionStorage.getItem("errorPrac") == "null") {
-                sessionStorage.setItem("errorPrac", 0);
-                return true;
-            } else {
-                return false;
-            }
 
-            }
-        };
-    
     var practice = {
     timeline: [
         practice_error_instruction,
@@ -182,14 +119,9 @@ var choice_trial= {
     data: {
           exp_type: 'practice',
         },
-
-
 };
 
-var welcome2 = {
-        type: jsPsychHtmlKeyboardResponse,
-         stimulus: "<p style =' color : white'>NONONONONO</p>"
-};
+
     timeline.push(instruction);
     timeline.push(practice);
     timeline.push(feedback_prac)
