@@ -68,8 +68,6 @@ def training_loop(dataloader_train, device, model, loss_function, optimizer):
     for idx_batch, (batch_image, batch_label) in enumerate(dataloader_train):
 
         batch_label = torch.vstack(batch_label).T.float()
-        batch_image = batch_image.to(device)
-        batch_label = batch_label.to(device)
         #记得每一次处理数据之前要做这一步
         optmizer.zero_grad()
 
@@ -105,8 +103,7 @@ def validation_loop(dataloader_val, device, model, loss_function, optimizer):
         for idx_batch, (batch_image, batch_label) in enumerate(dataloader_val):
             batch_label = torch.vstack(batch_label).T.float()
             #记得每一次处理数据之前要做这一步
-            batch_image = batch_image.to(device)
-            batch_label = batch_label.to(device)
+
             features,hidden_representation,prediction, confidence = model(batch_image.to(device))
 
             class_loss = loss_function(prediction.float(), batch_label.float())
@@ -150,7 +147,7 @@ if __name__ == "__main__":
         p.requires_grad = True
 
     for p in SimpleCNN.confidence_layer.parameters():
-        p.requires_grad = True
+        p.requires_grad = False# if want to train the confidence layer, use True
 
     params = [{"params": SimpleCNN.hidden_layer.parameters(),
                "lr": commonsetting.learning_rate,
@@ -158,11 +155,12 @@ if __name__ == "__main__":
                {
                 "params": SimpleCNN.decision_layer.parameters(),
                "lr": commonsetting.learning_rate,
-               }, 
+               }''', 
                {
                 "params": SimpleCNN.confidence_layer.parameters(),
                "lr": commonsetting.learning_rate,
-               }]
+               }'''
+             ]
 
     optmizer = Adam(params, lr=commonsetting.learning_rate)
     loss_fun = nn.BCELoss()
@@ -173,10 +171,13 @@ if __name__ == "__main__":
         SimpleCNN, val_loss = validation_loop(dataloader_val, commonsetting.device, SimpleCNN, loss_fun, optmizer)
         best_valid_loss, counts = determine_training_stops(SimpleCNN, epoch, warmup_epochs=commonsetting.warmup_epochs, valid_loss=val_loss, counts=counts, 
                                  device=commonsetting.device, best_valid_loss=best_valid_loss, tol=commonsetting.tol, 
-                                 f_name="../models/train_pixel_0.6/simplecnn_bs32e4i224h300.h5")
+                                 f_name="../models/simplecnn_bs32e4i224h200.h5")
         if counts >= commonsetting.patience:#(len(losses) > patience) and (len(set(losses[-patience:])) == 1):
             break
         else:
             print(f'\nepoch {epoch + 1}, best valid loss = {best_valid_loss:.8f},count = {counts}')
+
+
+
 
 

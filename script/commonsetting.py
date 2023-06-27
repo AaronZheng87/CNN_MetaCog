@@ -14,7 +14,7 @@ noise_level_val = 1
 noise_level_test = 0.5
 
 batch_size = 32#调
-image_resize = 128#调
+image_resize = 224#调
 num_workers = 4
 learning_rate = 1e-4#调
 
@@ -70,6 +70,7 @@ output_layer_size       = 3
 confidence_layer_size   = 2
 in_shape                = (1, 3, image_resize, image_resize)
 retrain_encoder         = False
-device                  = torch.device('cuda' if torch.cuda.is_available() else 'cpu');#print(f'working on {device}')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 if __name__ == "__main__":
     pass
