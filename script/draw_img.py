@@ -89,6 +89,6 @@ def add_to_all2(pixel, num, tofold):
                         pass
 
 
-add_to_all2(0.55, 5, "test")
-add_to_all2(0.5, 5, "validation")
-add_to_all2(0.4, 10, "train")
+add_to_all2(0.65, 5, "test")
+add_to_all2(0.625, 5, "validation")
+add_to_all2(0.6, 10, "train")

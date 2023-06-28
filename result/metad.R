@@ -70,3 +70,16 @@ final_metad %>%
 
 write_csv(final_metad, "sub1_metad.csv")
 getwd()
+
+
+
+df_cnn <- read_csv("/Users/zhengyuanrui/CNN_Moral-MetaCog/result/reuslt_cnn.csv")
+
+
+df_cnn %>% 
+  group_by(acc, confidence) %>% 
+  summarise(n = n()
+  )
+library(metaSDT)
+?metaSDT
+?fit_meta_d_MLE()
