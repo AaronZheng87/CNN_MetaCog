@@ -59,7 +59,7 @@ var jsPsych = initJsPsych({
     stimulus: jsPsych.timelineVariable("stim"),
     choices: "NO_KEYS",
     prompt: "<p> </p>",
-    trial_duration: 2000,
+    trial_duration: 200,
     data: {
           correct_response: 'No-response',
           acc:0,//which is impossible but we set it as initial data
@@ -75,7 +75,7 @@ var trial2 = {
     stimulus: '<p> </p>',
     choices: "NO_KEYS",
     prompt:'a',
-    trial_duration:2000,
+    trial_duration:1500,
     data: {
           correct_response: 'No-response',
           acc:0,//which is impossible but we set it as initial data
@@ -119,7 +119,7 @@ var trial2 = {
     stimulus: "<p style =' color : white'>你认为刚才你的判断是?</p>",
     choices: ['a', 'd'],
     prompt:'a',
-    trial_duration: 2000, 
+    trial_duration: 1500, 
     data: {
       decision_2: 'Noinclude', 
       record_acc: "no"
