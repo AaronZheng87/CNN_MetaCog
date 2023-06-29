@@ -166,6 +166,10 @@ if __name__ == "__main__":
 
     optmizer = Adam(params, lr=commonsetting.learning_rate)
     loss_fun = nn.BCELoss()
+    
+    
+    loss_fun_conf = nn.BCELoss()
+    
     counts = 0
     best_valid_loss = np.inf
     for epoch in range(1000):
@@ -173,7 +177,7 @@ if __name__ == "__main__":
         SimpleCNN, val_loss = validation_loop(dataloader_val, commonsetting.device, SimpleCNN, loss_fun, optmizer)
         best_valid_loss, counts = determine_training_stops(SimpleCNN, epoch, warmup_epochs=commonsetting.warmup_epochs, valid_loss=val_loss, counts=counts, 
                                  device=commonsetting.device, best_valid_loss=best_valid_loss, tol=commonsetting.tol, 
-                                 f_name="../models/train_pixel_0.6/simplecnn_bs32e4i224h300.h5")
+                                 f_name="../models/train_pixel_mixed/simplecnn_bs64e4i224h300.h5")
         if counts >= commonsetting.patience:#(len(losses) > patience) and (len(set(losses[-patience:])) == 1):
             break
         else:

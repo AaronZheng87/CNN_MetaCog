@@ -62,7 +62,7 @@ def add_to_all2(pixel, num, tofold):
                     if img_name.startswith('circle'):
                         img_path = fold_path + '/' + img_name
                         img_name2 = img_name[:-4]
-                        save_path = "../" + str(tofold)+"/" + "circle"+ "/" +img_name2 +"_" +str(i+1) + ".png"
+                        save_path = "../" + str(tofold)+"/" + "circle"+ "/" +img_name2 + "-"  + str(pixel) +"_" +str(i+1) + ".png"
                         add_noise(img_path, pixel, save_path)
                     else:
                         pass
@@ -72,7 +72,7 @@ def add_to_all2(pixel, num, tofold):
                     if img_name.startswith('square'):
                         img_path = fold_path + '/' + img_name
                         img_name2 = img_name[:-4]
-                        save_path = "../" + str(tofold)+"/" + "square"+ "/" +img_name2 +"_" +str(i+1) + ".png"
+                        save_path = "../" + str(tofold)+"/" + "square"+ "/" +img_name2 + "-"  + str(pixel) +"_" +str(i+1) + ".png"
                         add_noise(img_path, pixel, save_path)
                     else:
                         pass
@@ -83,12 +83,17 @@ def add_to_all2(pixel, num, tofold):
                     if img_name.startswith('triangle'):
                         img_path = fold_path + '/' + img_name
                         img_name2 = img_name[:-4]
-                        save_path = "../" + str(tofold)+"/" + "triangle"+ "/" +img_name2 +"_" +str(i+1) + ".png"
+                        save_path = "../" + str(tofold)+"/" + "triangle"+ "/" +img_name2+ "-" + str(pixel) +"_" +str(i+1) + ".png"
                         add_noise(img_path, pixel, save_path)
                     else:
                         pass
-
-
-add_to_all2(0.65, 5, "test")
+                    
+add_to_all2(0.5, 5, "train")
+add_to_all2(0.55, 5, "train")
+add_to_all2(0.6, 5, "train")
+add_to_all2(0.61, 5, "train")
+add_to_all2(0.62, 5, "train")
+add_to_all2(0.63, 5, "train")
+add_to_all2(0.64, 5, "train")
 add_to_all2(0.625, 5, "validation")
-add_to_all2(0.6, 10, "train")
+add_to_all2(0.65, 5, "test")
