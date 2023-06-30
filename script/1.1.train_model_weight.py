@@ -60,7 +60,7 @@ def determine_training_stops(net,
             counts += 1
     return best_valid_loss,counts
 
-def training_loop(dataloader_train, device, model, loss_function, optimizer):
+def training_loop(dataloader_train, device, model, loss_function, conf_loss_function, optimizer):
     model.train(True)
     dataloader_train = tqdm(dataloader_train)
     train_loss = 0.
@@ -68,6 +68,8 @@ def training_loop(dataloader_train, device, model, loss_function, optimizer):
     for idx_batch, (batch_image, batch_label) in enumerate(dataloader_train):
 
         batch_label = torch.vstack(batch_label).T.float()
+        batch_image = batch_image.to(device)
+        batch_label = batch_label.to(device)
         #记得每一次处理数据之前要做这一步
         optmizer.zero_grad()
 
@@ -81,8 +83,7 @@ def training_loop(dataloader_train, device, model, loss_function, optimizer):
         correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
         
 
-
-        conf_loss = loss_function(confidence.float(), correct_preds.float())
+        conf_loss = conf_loss_function(confidence.float(), correct_preds.float())
 
         combined_loss = class_loss + conf_loss
         train_loss = train_loss + combined_loss.item()
@@ -93,7 +94,7 @@ def training_loop(dataloader_train, device, model, loss_function, optimizer):
     return model, train_loss
 
 
-def validation_loop(dataloader_val, device, model, loss_function, optimizer):
+def validation_loop(dataloader_val, device, model, loss_function, conf_loss_function, optimizer):
 
     model.eval()
     dataloader_val = tqdm(dataloader_val)
@@ -103,7 +104,8 @@ def validation_loop(dataloader_val, device, model, loss_function, optimizer):
         for idx_batch, (batch_image, batch_label) in enumerate(dataloader_val):
             batch_label = torch.vstack(batch_label).T.float()
             #记得每一次处理数据之前要做这一步
-
+            batch_image = batch_image.to(device)
+            batch_label = batch_label.to(device)
             features,hidden_representation,prediction, confidence = model(batch_image.to(device))
 
             class_loss = loss_function(prediction.float(), batch_label.float())
@@ -115,7 +117,7 @@ def validation_loop(dataloader_val, device, model, loss_function, optimizer):
             correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
             
 
-            conf_loss = loss_function(confidence.float(), correct_preds.float())
+            conf_loss = conf_loss_function(confidence.float(), correct_preds.float())
 
             combined_loss = class_loss + conf_loss
             val_loss = val_loss + combined_loss.item()
@@ -147,7 +149,7 @@ if __name__ == "__main__":
         p.requires_grad = True
 
     for p in SimpleCNN.confidence_layer.parameters():
-        p.requires_grad = False# if want to train the confidence layer, use True
+        p.requires_grad = True
 
     params = [{"params": SimpleCNN.hidden_layer.parameters(),
                "lr": commonsetting.learning_rate,
@@ -155,29 +157,30 @@ if __name__ == "__main__":
                {
                 "params": SimpleCNN.decision_layer.parameters(),
                "lr": commonsetting.learning_rate,
-               }''', 
+               }, 
                {
                 "params": SimpleCNN.confidence_layer.parameters(),
                "lr": commonsetting.learning_rate,
-               }'''
-             ]
+               }]
 
     optmizer = Adam(params, lr=commonsetting.learning_rate)
     loss_fun = nn.BCELoss()
+    
+    
+    conf_loss_fun = nn.BCELoss(weight=commonsetting.class_weight)
+    conf_loss_fun = conf_loss_fun.to(commonsetting.device)
+    
     counts = 0
     best_valid_loss = np.inf
     for epoch in range(1000):
-        SimpleCNN, train_loss = training_loop(dataloader_train, commonsetting.device, SimpleCNN, loss_fun, optmizer)
-        SimpleCNN, val_loss = validation_loop(dataloader_val, commonsetting.device, SimpleCNN, loss_fun, optmizer)
+        SimpleCNN, train_loss = training_loop(dataloader_train, commonsetting.device, SimpleCNN, loss_fun, conf_loss_fun, optmizer)
+        SimpleCNN, val_loss = validation_loop(dataloader_val, commonsetting.device, SimpleCNN, loss_fun,conf_loss_fun , optmizer)
         best_valid_loss, counts = determine_training_stops(SimpleCNN, epoch, warmup_epochs=commonsetting.warmup_epochs, valid_loss=val_loss, counts=counts, 
                                  device=commonsetting.device, best_valid_loss=best_valid_loss, tol=commonsetting.tol, 
-                                 f_name="../models/simplecnn_bs32e4i224h200.h5")
+                                 f_name="../models/train_mixed_weight/simplecnn_b32e4i224h300w2601.h5")
         if counts >= commonsetting.patience:#(len(losses) > patience) and (len(set(losses[-patience:])) == 1):
             break
         else:
             print(f'\nepoch {epoch + 1}, best valid loss = {best_valid_loss:.8f},count = {counts}')
-
-
-
 
 

@@ -13,7 +13,7 @@ noise_level_train = 3
 noise_level_val = 1
 noise_level_test = 0.5
 
-batch_size = 64#调
+batch_size = 32#调
 image_resize = 224#调
 num_workers = 4
 learning_rate = 1e-4#调
@@ -24,6 +24,11 @@ tol = 1e-4
 
 patience = 20#调
 warmup_epochs = 3
+
+
+#class weight
+class_weight = torch.FloatTensor([260, 1])
+
 
 def hidden_activation_functions(activation_func_name:str,num_parameters:int=3) -> nn.Module:
     """
