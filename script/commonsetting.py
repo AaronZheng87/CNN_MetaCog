@@ -26,9 +26,6 @@ patience = 20#调
 warmup_epochs = 3
 
 
-#class weight
-class_weight = torch.FloatTensor([260, 1])
-
 
 def hidden_activation_functions(activation_func_name:str,num_parameters:int=3) -> nn.Module:
     """

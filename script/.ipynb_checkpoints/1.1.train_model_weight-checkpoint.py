@@ -7,7 +7,7 @@ from torch import nn
 import torch
 from tqdm import tqdm
 import numpy as np
-
+from sklearn.utils.class_weight import compute_class_weight
 
 
 def determine_training_stops(net,
@@ -60,6 +60,22 @@ def determine_training_stops(net,
             counts += 1
     return best_valid_loss,counts
 
+def compute_weight_per_batch(correct_preds):
+    """
+    Parameters
+    ----------
+    correct_preds : Tensor
+        The correct labels for confidence in each batch
+    Returns
+    -------
+    
+    """
+    weights = compute_class_weight(class_weight='balanced',
+                                   classes=np.unique(correct_preds.detach().cpu().numpy()), # get unique classes
+                                   y=correct_preds.detach().cpu().numpy(), # this is used for computing the weights for each class
+                                   )
+    return torch.from_numpy(weights)
+
 def training_loop(dataloader_train, device, model, loss_function, conf_loss_function, optimizer):
     model.train(True)
     dataloader_train = tqdm(dataloader_train)
@@ -79,11 +95,12 @@ def training_loop(dataloader_train, device, model, loss_function, conf_loss_func
         
         correct_preds = batch_label.clone().detach().argmax(1)==prediction.clone().detach().argmax(1)
         correct_preds = correct_preds.float()
-
-        correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
+        # compute weights for loss function
+        weights = compute_weight_per_batch(correct_preds)
+        loss_func = conf_loss_function(weight = weights.to(device),) # put the weight to device
         
-
-        conf_loss = conf_loss_function(confidence.float(), correct_preds.float())
+        correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
+        conf_loss = loss_func(input = confidence.float(), target = correct_preds.float())
 
         combined_loss = class_loss + conf_loss
         train_loss = train_loss + combined_loss.item()
@@ -113,11 +130,12 @@ def validation_loop(dataloader_val, device, model, loss_function, conf_loss_func
         
             correct_preds = batch_label.clone().detach().argmax(1)==prediction.clone().detach().argmax(1)
             correct_preds = correct_preds.float()
+            # compute weights for loss function
+            weights = compute_weight_per_batch(correct_preds)
+            loss_func = conf_loss_function(weight = weights.to(device),) # put the weight to device
 
             correct_preds = torch.vstack([1-correct_preds, correct_preds]).T.float()
-            
-
-            conf_loss = conf_loss_function(confidence.float(), correct_preds.float())
+            conf_loss = loss_func(input = confidence.float(), target = correct_preds.float())
 
             combined_loss = class_loss + conf_loss
             val_loss = val_loss + combined_loss.item()
@@ -167,8 +185,7 @@ if __name__ == "__main__":
     loss_fun = nn.BCELoss()
     
     
-    conf_loss_fun = nn.BCELoss(weight=commonsetting.class_weight)
-    conf_loss_fun = conf_loss_fun.to(commonsetting.device)
+    conf_loss_fun = nn.BCELoss # use the object,not the function so we can modify the weights easily in each batch
     
     counts = 0
     best_valid_loss = np.inf
@@ -177,7 +194,7 @@ if __name__ == "__main__":
         SimpleCNN, val_loss = validation_loop(dataloader_val, commonsetting.device, SimpleCNN, loss_fun,conf_loss_fun , optmizer)
         best_valid_loss, counts = determine_training_stops(SimpleCNN, epoch, warmup_epochs=commonsetting.warmup_epochs, valid_loss=val_loss, counts=counts, 
                                  device=commonsetting.device, best_valid_loss=best_valid_loss, tol=commonsetting.tol, 
-                                 f_name="../models/train_mixed_weight/simplecnn_b32e4i224h300w2601.h5")
+                                 f_name="../models/train_mixed_weight/simplecnn_retest.h5")
         if counts >= commonsetting.patience:#(len(losses) > patience) and (len(set(losses[-patience:])) == 1):
             break
         else:
