@@ -38,6 +38,11 @@ This project endeavors to examine the manifestation of confidence in the percept
 
 ### Stimuli and task
 #### Stimuli(datasets)
+
+#### Task
+
+
+
 ## Result
 
 
