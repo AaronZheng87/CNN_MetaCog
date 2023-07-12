@@ -23,7 +23,7 @@ This project endeavors to examine the manifestation of confidence in the percept
 ## Environment
 ### Hardware
 
-- [Platform: AutoDL](https://www.autodl.com)
+- Platform: [ AutoDL](https://www.autodl.com)
 - GPU: RTX 3090(24GB) * 1
 - CPU: 14 vCPU Intel(R) Xeon(R) Gold 6330 CPU @ 2.00GHz
 
