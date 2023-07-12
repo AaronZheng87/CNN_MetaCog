@@ -37,8 +37,14 @@ This project endeavors to examine the manifestation of confidence in the percept
 ## Method
 
 ### Stimuli and task
-#### Stimuli(datasets)
 
+#### Stimuli(datasets)
+The datasets were produced by [Pillow](https://pillow.readthedocs.io/en/stable/). The datasets have 10 possible image classes(triangle, circle and square). We used [py](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/draw_origin.py) file drew 100 different 300x300 pixel images each image classed as original images:
+```python
+draw_circle3(300, 300, 100)
+draw_rectangle3(300, 300, 100)
+draw_triangle3(300, 300, 100)
+```
 #### Task
 
 
@@ -56,3 +62,5 @@ This project endeavors to examine the manifestation of confidence in the percept
 
 
 ## Contributors
+
+Y-R.Zheng conceived project and planned experiments. N.Mei directed the modeling of the project. This project's experiment referenced [Hu Chuanpeng's research](https://online.ucpress.edu/collabra/article/6/1/20/113065/Good-Me-Bad-Me-Prioritization-of-the-Good-Self). Y-R.Zheng implemented experiments and analyzed results.
