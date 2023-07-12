@@ -123,7 +123,7 @@ Source: https://www.nature.com/articles/s41467-023-39737-2
   | CNN      | 1.276  | 0.910       |
   | Subject1 | 2.156  | 2.198       |
   
-  The result can be foud at [1.3.test_model.ipynb](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/1.3.test_model.ipynb)
+  The result can be foud at [1.3.test_model.ipynb](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/1.3.test_model.ipynb).
 
 
 
