@@ -110,4 +110,4 @@ Each trial commenced with participants fixating on a small white cross for 500ms
 
 ## Contributors
 
-Y-R.Zheng conceived project and planned experiments. N.Mei directed the modeling of the project. This project's experiment referenced [Hu Chuanpeng's research](https://online.ucpress.edu/collabra/article/6/1/20/113065/Good-Me-Bad-Me-Prioritization-of-the-Good-Self). Y-R.Zheng implemented experiments and analyzed results.
+Y-R.Zheng conceived project and planned experiments. N.Mei directed the modeling of the project. This project's experiment referenced [Hu Chuanpeng's research](https://online.ucpress.edu/collabra/article/6/1/20/113065/Good-Me-Bad-Me-Prioritization-of-the-Good-Self). Y-R.Zheng implemented experiments and analyzed the results.
