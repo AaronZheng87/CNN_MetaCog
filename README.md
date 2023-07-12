@@ -84,20 +84,23 @@ Each trial commenced with participants fixating on a small white cross for 500ms
 
   The probability of confidence given correctness of model and subject are: 
 
-  |          | $p(low|correct)$ | $p(high|correct)$ | $p(low|incorrect)$ | $p(high|incorrect)$ | $p(correct)$ |
-  | -------- | ---------------- | ----------------- | ------------------ | ------------------- | ------------ |
-  | CNN      | 0.426            | 0.574             | 0.731              | 0.269               | 0.639        |
-  | Subject1 | 0.156            | 0.844             | 0.591              | 0.409               | 0.707        |
-
+  |          | $p(low|correct)$   | $p(high|correct)$   |
+  | -------- | ------------------ | ------------------- |
+  | CNN      | 0.426              | 0.574               |
+  | Subject1 | 0.156              | 0.844               |
+  |          | $p(low|incorrect)$ | $p(high|incorrect)$ |
+  | CNN      | 0.731              | 0.269               |
+  | Subject1 | 0.591              | 0.409               |
   
-
+  
+  
   The (meta) dprime of model and subject: 
-
+  
   |          | dprime | meta dprime |
   | -------- | ------ | ----------- |
   | CNN      | 1.276  | 0.910       |
   | Subject1 | 2.156  | 2.198       |
-
+  
   The result can be foud at [1.3.test_model.ipynb](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/1.3.test_model.ipynb)
 
 
