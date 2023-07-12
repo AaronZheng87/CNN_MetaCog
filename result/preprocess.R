@@ -1,5 +1,5 @@
 library(tidyverse)
-df <- read_csv("/Users/zhengyuanrui/Downloads/exptest.csv")
+df <- read_csv("/Users/zhengyuanrui/CNN_Moral-MetaCog/data/sub/raw/exptest.csv")
 
 df2 <- df %>% 
   filter(trial_type%in%c("image-keyboard-response", "html-keyboard-response"))
@@ -54,7 +54,8 @@ cor_stim <- df_stim %>%
 
 cor_type2 <- df_type2 %>% 
   filter(!(trials_id %in% incor_id)) %>% 
-  select(decision_2, trials_id)
+  select(decision_2, trials_id, rt) %>% 
+  rename(rt_type2 = rt)
 
 df_stim_type1 <- left_join(cor_stim, cor_type1, by = "trials_id")
 final <- left_join(df_stim_type1, cor_type2, by = "trials_id")
@@ -70,16 +71,3 @@ final_metad %>%
 
 write_csv(final_metad, "sub1_metad.csv")
 getwd()
-
-
-
-df_cnn <- read_csv("/Users/zhengyuanrui/CNN_Moral-MetaCog/result/reuslt_cnn.csv")
-
-
-df_cnn %>% 
-  group_by(acc, confidence) %>% 
-  summarise(n = n()
-  )
-library(metaSDT)
-?metaSDT
-?fit_meta_d_MLE()
