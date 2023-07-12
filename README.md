@@ -76,9 +76,11 @@ Prior to the experiment, subjects were asked to learn a accosication between dif
 
 Each trial commenced with participants fixating on a small white cross for 500ms, followed by the presentation of an image for 200ms. The task for participants was to discern the corresponding label of the image using their right hand ("j", "k", "l" keys) within 1500ms. After indicating the label corresponding to the image, participants were required to report their decision confidence using their left hand within 1500ms ("correct" or "incorrect", "a" or "d" keys). The mappings between buttons and moral labels, as well as confidence responses, were randomized across trials.
 
-See the [exp file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/exp).
-
 ![experiment task](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/exp/task.png)
+
+
+
+See the [exp file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/exp).
 
 ### Model
 
