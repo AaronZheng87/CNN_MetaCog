@@ -15,7 +15,7 @@
 
 
 ## Goal
-This project endeavors to examine the manifestation of confidence in the perceptual matching task and explore the potential of simulating this unconscious processing of human  through the utilization of deep neural networks. Moreover, the project aims to replicate the findings of Webb's experiment 1 as an additional objective.
+This project endeavors to examine the manifestation of confidence in the perceptual matching task and explore the potential of simulating this unconscious processing of human  through the utilization of deep neural networks. Moreover, the project aims to replicate the findings of [Webb's experiment 1](https://www.nature.com/articles/s41467-023-39737-2) as an additional objective.
 
 
 
@@ -62,11 +62,13 @@ add_to_all2(0.65, 5, "test")
 
 - The model and subjects would finally evaluate on [sub_test file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/data/img/sub_test), which was selected 120 images of each classes from test file.
 
+Stimuli example:
 
+![stim_example](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/data/img/sub_test/square/square0-0.65_3.png)
 
 #### Task
 
-Prior to the experiment, subjectss were asked to learn a accosication between different class of geometric images and the moral labels: 
+Prior to the experiment, subjects were asked to learn a accosication between different class of geometric images and the moral labels: 
 
 - Triangle images matching "Good Person"
 - Circle images matching "Neutral Person"
@@ -75,6 +77,18 @@ Prior to the experiment, subjectss were asked to learn a accosication between di
 Each trial commenced with participants fixating on a small white cross for 500ms, followed by the presentation of an image for 200ms. The task for participants was to discern the corresponding label of the image using their right hand ("j", "k", "l" keys) within 1500ms. After indicating the label corresponding to the image, participants were required to report their decision confidence using their left hand within 1500ms ("correct" or "incorrect", "a" or "d" keys). The mappings between buttons and moral labels, as well as confidence responses, were randomized across trials.
 
 See the [exp file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/exp).
+
+![experiment task](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/exp/task.png)
+
+### Model
+
+We used performance-optimized neural model. The model was created by Taylor Webb, but we used more complex convolutional neural network: resnet50. 
+
+##### model architecture(figure a):
+
+![model architecture](https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41467-023-39737-2/MediaObjects/41467_2023_39737_Fig2_HTML.png?as=webp)
+
+Source: https://www.nature.com/articles/s41467-023-39737-2
 
 ## Result
 
