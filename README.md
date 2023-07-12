@@ -88,13 +88,13 @@ See the [exp file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/e
 
   
   
-  |          | $p(low|correct)$   | $p(high|correct)$   |
-  | -------- | ------------------ | ------------------- |
-  | CNN      | 0.426              | 0.574               |
-  | Subject1 | 0.156              | 0.844               |
-  |          | $p(low|incorrect)$ | $p(high|incorrect)$ |
-  | CNN      | 0.731              | 0.269               |
-  | Subject1 | 0.591              | 0.409               |
+  |          | p(low\|correct)   | p(high\|correct)   |
+  | -------- | ----------------- | ------------------ |
+  | CNN      | 0.426             | 0.574              |
+  | Subject1 | 0.156             | 0.844              |
+  |          | p(low\|incorrect) | p(high\|incorrect) |
+  | CNN      | 0.731             | 0.269              |
+  | Subject1 | 0.591             | 0.409              |
   
   
   
