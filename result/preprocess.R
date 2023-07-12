@@ -1,5 +1,5 @@
 library(tidyverse)
-df <- read_csv("/Users/zhengyuanrui/CNN_Moral-MetaCog/data/sub/raw/exptest.csv")
+df <- read_csv("/Users/zhengyuanrui/CNN_Moral-MetaCog/data/sub/raw/exptest (1).csv")
 
 df2 <- df %>% 
   filter(trial_type%in%c("image-keyboard-response", "html-keyboard-response"))
@@ -65,9 +65,5 @@ final_metad <- final %>%
          response = if_else(decision == "好人", 1, 0), 
          rating = if_else(decision_2 == "正确", 2, 1))
 
-final_metad %>% 
-  group_by(acc) %>% 
-  summarise(n = n())
-
-write_csv(final_metad, "sub1_metad.csv")
+write_csv(final_metad, "sub1.csv")
 getwd()

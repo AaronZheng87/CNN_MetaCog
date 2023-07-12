@@ -10,7 +10,6 @@
 - [Environment](#environment)
 - [Method](#Method)
 - [Result](#result)
-- [Discussion](#discussion)
 - [Contributors](#contributors)
 
 
@@ -39,23 +38,71 @@ This project endeavors to examine the manifestation of confidence in the percept
 ### Stimuli and task
 
 #### Stimuli(datasets)
-The datasets were produced by [Pillow](https://pillow.readthedocs.io/en/stable/). The datasets have 10 possible image classes(triangle, circle and square). We used [py](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/draw_origin.py) file drew 100 different 300x300 pixel images each image classed as original images:
+The datasets were created using [Pillow](https://pillow.readthedocs.io/en/stable/). These datasets consist of 3 possible image classes, including triangles, circles, and squares. To generate the datasets, we utilized the [draw_origin.py](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/draw_origin.py) file to draw 100 different 300x300 pixel images for each image class, resulting in original images:
 ```python
 draw_circle3(300, 300, 100)
 draw_rectangle3(300, 300, 100)
 draw_triangle3(300, 300, 100)
 ```
+Subsequently, noise was added to the original images, and this process was repeated multiple times. The method for adding noise can be found at https://onelinerhub.com/python-pillow/how-to-add-noise. The pipeline for adding noise and repeating the process can be found in the [draw_img.py](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/draw_img.py) script. The training datasets contain varying levels of noise, while the validation and test datasets have a single noise level:
+
+```python
+add_to_all2(0.5, 5, "train")
+add_to_all2(0.55, 5, "train")
+add_to_all2(0.6, 5, "train")
+add_to_all2(0.61, 5, "train")
+add_to_all2(0.62, 5, "train")
+add_to_all2(0.63, 5, "train")
+add_to_all2(0.64, 5, "train")
+add_to_all2(0.625, 5, "validation")
+add_to_all2(0.65, 5, "test")
+```
+
+
+
+- The model and subjects would finally evaluate on [sub_test file](https://github.com/AaronZheng87/CNN_Moral-MetaCog/tree/main/data/img/sub_test), which was selected 120 images of each classes from test file.
+
+
+
 #### Task
 
+Prior to the experiment, subjectss were asked to learn a accosication between different class of geometric images and the moral labels: 
 
+- Triangle images matching "Good Person"
+- Circle images matching "Neutral Person"
+- Square images matching "Bad Person"
+
+Each trial commenced with participants fixating on a small white cross for 500ms, followed by the presentation of an image for 200ms. The task for participants was to discern the corresponding label of the image using their right hand ("j", "k", "l" keys) within 1500ms. After indicating the label corresponding to the image, participants were required to report their decision confidence using their left hand within 1500ms ("correct" or "incorrect", "a" or "d" keys). The mappings between buttons and moral labels, as well as confidence responses, were randomized across trials.
 
 ## Result
 
+- The ROC AUC score of model's type 1 classification is `0.814`
+
+- The ROC AUC score of model's confidence classification is `0.672`
+
+  
+
+  The probability of confidence given correctness of model and subject are: 
+
+  |          | $p(low|correct)$ | $p(high|correct)$ | $p(low|incorrect)$ | $p(high|incorrect)$ | $p(correct)$ |
+  | -------- | ---------------- | ----------------- | ------------------ | ------------------- | ------------ |
+  | CNN      | 0.426            | 0.574             | 0.731              | 0.269               | 0.639        |
+  | Subject1 | 0.156            | 0.844             | 0.591              | 0.409               | 0.707        |
+
+  
+
+  The (meta) dprime of model and subject: 
+
+  |          | dprime | meta dprime |
+  | -------- | ------ | ----------- |
+  | CNN      | 1.276  | 0.910       |
+  | Subject1 | 2.156  | 2.198       |
+
+  The result can be foud at [1.3.test_model.ipynb](https://github.com/AaronZheng87/CNN_Moral-MetaCog/blob/main/script/1.3.test_model.ipynb)
 
 
 
 
-## Discussion
 
 
 
