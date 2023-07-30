@@ -165,7 +165,7 @@ if __name__ == "__main__":
                }]
 
     optmizer = Adam(params, lr=commonsetting.learning_rate)
-    loss_fun = nn.BCELoss()
+    loss_fun = nn.BCELoss()#这些变量名字应该改得更直观一些
     
     
     loss_fun_conf = nn.BCELoss()
